@@ -1,0 +1,32 @@
+.container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.welcome{
+    margin: 50px;
+    font-size: 30px;
+    font-weight: bolder;
+}
+
+.boxContainer{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+}
+
+.box{
+    border: 2px;
+    border-style: solid;
+}
+
+.start{
+    margin: 3rem;
+    font-size: large;
+    font-weight: bold;
+    height: 5rem;
+    padding: 1rem;
+    border-radius: 20px;
+}
