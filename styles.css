@@ -12,6 +12,7 @@
 }
 
 .boxContainer{
+    margin-top: 20px;
     border: 10px solid;
     border-radius: 23px;
     display: grid;
@@ -30,5 +31,12 @@
     font-weight: bold;
     height: 5rem;
     padding: 1rem;
+    border: 4px solid;
     border-radius: 20px;
+}
+
+.playerBanner{
+    border: 6px solid;
+    margin-top: 42px;
+    border-radius: 23px;
 }
