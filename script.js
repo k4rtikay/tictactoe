@@ -3,9 +3,9 @@ const container = document.querySelector('.container');
 const dialog = document.querySelector('dialog');
 const playerForm = document.querySelector('form');
 let flag = 0;
-function playerOne(){
+function player(){
     let uid;
-    let arrP1 = [];
+    let arr = [];
     function user (val){
         uid = val;
     }
@@ -13,31 +13,21 @@ function playerOne(){
         get uid(){
             return uid;
         },
-        arr: arrP1
-    };
-}
-
-function playerTwo(){
-    let uid;
-    let arrP2 = [];
-    function user (val){
-        uid = val;
-    }
-    return {setUser: user,
-        get uid(){
-            return uid;
+        get arr(){
+            return arr;
         },
-        arr: arrP2
+        clear(){
+            arr=[];
+        }
     };
 }
 
+const p1 = player();
+const p2 = player();
 
 
 
 const gameboard =(function () {
-
-    const p1 = playerOne();
-    const p2 = playerTwo();
     
     function createBoard (){
         const boxContainer = document.createElement('div');
@@ -60,18 +50,9 @@ const gameboard =(function () {
         container.appendChild(playerBanner);
     }
 
-    /*function playerBanner (){
-        let playerBanner = document.createElement('div');
-        playerBanner.style.height='4rem';
-        playerBanner.style.width='21rem';
-        playerBanner.classList.add('playerBanner');
-        playerBanner.textContent=`${p1.uid}'s turn`;
-        container.appendChild(playerBanner);
-    }*/
-
     function clearBoard(){
-        p1.arr='';
-        p2.arr='';
+        p1.clear();
+        p2.clear();
         document.querySelector('.boxContainer').remove();
     }
     
@@ -81,20 +62,19 @@ const gameboard =(function () {
         restartButton.classList.add('.restart');
         restartButton.type='submit';
         container.appendChild(restartButton);
-
-        
+ 
         restartButton.addEventListener('click', ()=>{
             document.querySelector('.playerBanner').remove();
             gameboard.createBoard();
             restartButton.remove();
+            document.querySelector('.playerBanner').textContent=`${p1.uid}'s turn`;
             gameControl.start();
         })
     }
 
-    //arrBoard = [1,2,3,4,5,6,7,8,9];
     return {createBoard, clearBoard, restart};
 })();
-
+ 
 
 const game = (function() {;
 
@@ -105,7 +85,6 @@ const game = (function() {;
         document.querySelector('.welcome').remove();
         document.querySelector('.start').remove();
         gameboard.createBoard();
-        //gameboard.playerBanner();
 
     }
 
@@ -113,9 +92,17 @@ const game = (function() {;
 })();
 
 
-document.getElementById('playerForm').addEventListener('submit', function(event) {
+document.getElementById('form').addEventListener('submit', function(event) {
+    console.log('defaul preventsed')
     event.preventDefault();
-  })
+
+    p1.setUser((nameOne.value));
+    
+    gameControl.start(); 
+    document.querySelector('.playerBanner').textContent=`${p1.uid}'s turn`
+    dialog.close();
+  });
+    
 
 /*document.addEventListener("click", e => {
     
@@ -143,9 +130,6 @@ document.getElementById('playerForm').addEventListener('submit', function(event)
             [3,5,7]
         ];
     
-    
-        const p1 = playerOne();
-        const p2 = playerTwo();
         p1.setUser(nameOne.value);
         p2.setUser(nameTwo.value);
 
@@ -155,23 +139,29 @@ document.getElementById('playerForm').addEventListener('submit', function(event)
             element.addEventListener('click', ()=>{
                 if(flag==0){
                     console.log('p1 turn')
+                    console.log(p1);
                     let num = parseInt(element.getAttribute('data-index'));
                     if(!(p1.arr.includes(num)||p2.arr.includes(num))){
                         p1.arr.push(num);
-                    element.textContent='X';
+                        element.textContent='X';
 
-                    let isArrayInMatrix = winMatrix.some(
-                        subArray => subArray.every(value => p1.arr.includes(value))
-                    );
-                    if(isArrayInMatrix){
-                        document.querySelector('.playerBanner').textContent=`${p1.uid} WINS!!`
-                        gameboard.clearBoard();
-                        gameboard.restart();
-                    }else{
-                    console.log(p1.arr)
-                    flag=1;
-                    document.querySelector('.playerBanner').textContent=`${p2.uid}'s turn`;
-                    }
+                        let isArrayInMatrix = winMatrix.some(
+                            subArray => subArray.every(value => p1.arr.includes(value))
+                        );
+                        if(isArrayInMatrix){
+                            document.querySelector('.playerBanner').textContent=`${p1.uid} WINS!!`;
+                            flag=0;
+                            gameboard.clearBoard();
+                            gameboard.restart();
+                        }else if(p1.arr.length==5){
+                            document.querySelector('.playerBanner').textContent=`TIE GAME!!!`;
+                            gameboard.clearBoard();
+                            gameboard.restart();
+                        }else{
+                            console.log(p1.arr)
+                            flag=1;
+                            document.querySelector('.playerBanner').textContent=`${p2.uid}'s turn`;
+                        }   
                     }else{
                         console.log('block already taken');
                     }
@@ -180,20 +170,21 @@ document.getElementById('playerForm').addEventListener('submit', function(event)
                     let num = parseInt(element.getAttribute('data-index'));
                     if(!(p1.arr.includes(num)||p2.arr.includes(num))){
                         p2.arr.push(num);
-                    element.textContent='O';
+                        element.textContent='O';
 
-                    let isArrayInMatrix = winMatrix.some(
-                        subArray => subArray.every(value => p2.arr.includes(value))
-                    );
-                    if(isArrayInMatrix){
-                        document.querySelector('.playerBanner').textContent=`${p2.uid} WINS!!`
-                        gameboard.clearBoard();  
-                        gameboard.restart(); 
-                    }else{
-                    console.log(p2.arr)
-                    flag=0;
-                    document.querySelector('.playerBanner').textContent=`${p1.uid}'s turn`;
-                    }
+                        let isArrayInMatrix = winMatrix.some(
+                            subArray => subArray.every(value => p2.arr.includes(value))
+                        );
+                        if(isArrayInMatrix){
+                            document.querySelector('.playerBanner').textContent=`${p2.uid} WINS!!`
+                            flag=0;
+                            gameboard.clearBoard();  
+                            gameboard.restart(); 
+                        }else{
+                        console.log(p2.arr)
+                        flag=0;
+                        document.querySelector('.playerBanner').textContent=`${p1.uid}'s turn`;
+                        }
                     }else{
                         console.log('block already taken');
                     }
@@ -207,14 +198,4 @@ document.getElementById('playerForm').addEventListener('submit', function(event)
        } 
     
     })();
-    
-
-document.querySelector('.submit').addEventListener('click',()=>{  
-    const p1 = playerOne();
-    p1.setUser((nameOne.value));
-    
-    gameControl.start(); 
-    document.querySelector('.playerBanner').textContent=`${p1.uid}'s turn`
-    dialog.close();
-})
 
