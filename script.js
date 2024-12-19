@@ -59,7 +59,7 @@ const gameboard =(function () {
     function restart(){
         const restartButton = document.createElement('button');
         restartButton.textContent='RESTART';
-        restartButton.classList.add('.restart');
+        restartButton.classList.add('restart');
         restartButton.type='submit';
         container.appendChild(restartButton);
  
@@ -84,6 +84,7 @@ const game = (function() {;
         document.querySelector('.modal').showModal();
         document.querySelector('.welcome').remove();
         document.querySelector('.start').remove();
+        document.querySelector('body').style.backgroundImage='none';
         gameboard.createBoard();
 
     }
@@ -103,20 +104,6 @@ document.getElementById('form').addEventListener('submit', function(event) {
     dialog.close();
   });
     
-
-/*document.addEventListener("click", e => {
-    
-    if(!dialog.open) return;
-    const dialogDimensions = dialog.getBoundingClientRect()
-    if (
-      e.clientX < dialogDimensions.left ||
-      e.clientX > dialogDimensions.right ||
-      e.clientY < dialogDimensions.top ||
-      e.clientY > dialogDimensions.bottom
-    ) {
-      dialog.close();
-    }
-  })*/ 
 
     const gameControl = (function start(){
         let winMatrix = [
