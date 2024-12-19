@@ -51,26 +51,48 @@ const gameboard =(function () {
             newBox.setAttribute('data-index',`${i}`);
             boxContainer.appendChild(newBox);
         }
+
+        let playerBanner = document.createElement('div');
+        playerBanner.style.height='4rem';
+        playerBanner.style.width='21rem';
+        playerBanner.classList.add('playerBanner');
+        playerBanner.textContent='Enter Players:';
+        container.appendChild(playerBanner);
     }
 
-    function playerBanner (){
+    /*function playerBanner (){
         let playerBanner = document.createElement('div');
         playerBanner.style.height='4rem';
         playerBanner.style.width='21rem';
         playerBanner.classList.add('playerBanner');
         playerBanner.textContent=`${p1.uid}'s turn`;
         container.appendChild(playerBanner);
-    }
+    }*/
 
     function clearBoard(){
         p1.arr='';
         p2.arr='';
         document.querySelector('.boxContainer').remove();
-        createBoard();
     }
     
+    function restart(){
+        const restartButton = document.createElement('button');
+        restartButton.textContent='RESTART';
+        restartButton.classList.add('.restart');
+        restartButton.type='submit';
+        container.appendChild(restartButton);
+
+        
+        restartButton.addEventListener('click', ()=>{
+            document.querySelector('.playerBanner').remove();
+            gameboard.createBoard();
+            restartButton.remove();
+            gameControl.start();
+        })
+    }
+
     //arrBoard = [1,2,3,4,5,6,7,8,9];
-    return {createBoard, playerBanner, clearBoard};
+    return {createBoard, clearBoard, restart};
 })();
 
 
@@ -83,8 +105,8 @@ const game = (function() {;
         document.querySelector('.welcome').remove();
         document.querySelector('.start').remove();
         gameboard.createBoard();
-        gameboard.playerBanner();
-        
+        //gameboard.playerBanner();
+
     }
 
     start.addEventListener('click', startgame);
@@ -107,11 +129,9 @@ document.getElementById('playerForm').addEventListener('submit', function(event)
     ) {
       dialog.close();
     }
-  })*/  
+  })*/ 
 
-document.querySelector('.submit').addEventListener('click',()=>{
-    
-    const gameControl = (function(){
+    const gameControl = (function start(){
         let winMatrix = [
             [1,2,3],
             [4,5,6],
@@ -136,7 +156,8 @@ document.querySelector('.submit').addEventListener('click',()=>{
                 if(flag==0){
                     console.log('p1 turn')
                     let num = parseInt(element.getAttribute('data-index'));
-                    p1.arr.push(num);
+                    if(!(p1.arr.includes(num)||p2.arr.includes(num))){
+                        p1.arr.push(num);
                     element.textContent='X';
 
                     let isArrayInMatrix = winMatrix.some(
@@ -145,15 +166,20 @@ document.querySelector('.submit').addEventListener('click',()=>{
                     if(isArrayInMatrix){
                         document.querySelector('.playerBanner').textContent=`${p1.uid} WINS!!`
                         gameboard.clearBoard();
+                        gameboard.restart();
                     }else{
                     console.log(p1.arr)
                     flag=1;
                     document.querySelector('.playerBanner').textContent=`${p2.uid}'s turn`;
                     }
+                    }else{
+                        console.log('block already taken');
+                    }
                 }else if(flag==1){
                     console.log('p2 turn')
                     let num = parseInt(element.getAttribute('data-index'));
-                    p2.arr.push(num);
+                    if(!(p1.arr.includes(num)||p2.arr.includes(num))){
+                        p2.arr.push(num);
                     element.textContent='O';
 
                     let isArrayInMatrix = winMatrix.some(
@@ -161,21 +187,34 @@ document.querySelector('.submit').addEventListener('click',()=>{
                     );
                     if(isArrayInMatrix){
                         document.querySelector('.playerBanner').textContent=`${p2.uid} WINS!!`
-                        gameboard.clearBoard();   
+                        gameboard.clearBoard();  
+                        gameboard.restart(); 
                     }else{
                     console.log(p2.arr)
                     flag=0;
                     document.querySelector('.playerBanner').textContent=`${p1.uid}'s turn`;
+                    }
+                    }else{
+                        console.log('block already taken');
                     }
                     
                 }
             })
         });
         
-        
+       return{
+        start
+       } 
     
     })();
     
+
+document.querySelector('.submit').addEventListener('click',()=>{  
+    const p1 = playerOne();
+    p1.setUser((nameOne.value));
+    
+    gameControl.start(); 
+    document.querySelector('.playerBanner').textContent=`${p1.uid}'s turn`
     dialog.close();
 })
 
